@@ -16,7 +16,7 @@ pages = db.pages
 
 def crawlerThread(frontier):
     while len(frontier) != 0:
-        url = frontier.pop()
+        url = frontier.pop(0)
         visited.append(url)
 
         if (re.match("^https://www.cpp.edu", url) == None):
@@ -50,10 +50,10 @@ def crawlerThread(frontier):
                 print("Not found")
                 for link in bs.find_all("a", href=True):
                     temp = link['href']
-                    if (re.match("^https://", temp) == None):
+                    if (re.match("^https://www.cpp.edu", temp) == None):
                         temp = "https://www.cpp.edu" + temp
 
                     if temp not in visited:
-                        frontier.append(temp)
+                       frontier.append(temp)
 
 crawlerThread(frontier)
