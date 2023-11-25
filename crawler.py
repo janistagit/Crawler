@@ -27,12 +27,15 @@ def crawlerThread(frontier):
         except URLError as e:
             print("Server could not be found.")
         else:
+            data = str(html.read())
             document = {
                 "url":url,
-                "html":html
+                "html":data
             }
             pages.insert_one(document)
 
             bs = BeautifulSoup(html.read(), 'html.parser')
             if bs.find("h1", string="Permanent Faculty"):
                 frontier.clear()
+
+crawlerThread(frontier)
