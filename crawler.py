@@ -16,8 +16,8 @@ pages = db.pages
 
 def crawlerThread(frontier):
     while len(frontier) != 0:
-        visited.append(frontier[0])
         url = frontier.pop()
+        visited.append(url)
 
         if (re.match("^https://www.cpp.edu", url) == None):
              url = "https://www.cpp.edu" + url
@@ -27,8 +27,13 @@ def crawlerThread(frontier):
             html = html.read()
         except HTTPError as e:
             print(e)
+            continue
         except URLError as e:
             print("Server could not be found.")
+            continue
+        except Exception as e:
+            print("Another error has occurred.")
+            continue
         else:
             data = html.decode(encoding="iso-8859-1")
             document = {
