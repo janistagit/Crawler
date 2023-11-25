@@ -7,9 +7,9 @@ import re
 
 frontier = []
 frontier.append("https://www.cpp.edu/sci/computer-science/")
-target = "https://www.cpp.edu/sci/computer-science/faculty-and-staff/permanent-faculty.shtml"
 visited = []
 
+#Set up database connection, create database and collection
 client = MongoClient(host="localhost", port=27017)
 db = client.crawler
 pages = db.pages
@@ -19,6 +19,7 @@ def crawlerThread(frontier):
         url = frontier.pop(0)
         visited.append(url)
 
+        #Fix relative links if not already fixed
         if (re.match("^https://www.cpp.edu", url) == None):
              url = "https://www.cpp.edu" + url
 
@@ -35,6 +36,7 @@ def crawlerThread(frontier):
             print("Another error has occurred.")
             continue
         else:
+            #Add page to MongoDB collection
             data = html.decode(encoding="iso-8859-1")
             document = {
                 "url":url,
@@ -42,6 +44,7 @@ def crawlerThread(frontier):
             }
             pages.insert_one(document)
 
+            #Stop search if h1 header is target
             bs = BeautifulSoup(html, 'html.parser')
             if bs.find("h1", string="Permanent Faculty"):
                 frontier.clear()
@@ -50,6 +53,8 @@ def crawlerThread(frontier):
                 print("Not found")
                 for link in bs.find_all("a", href=True):
                     temp = link['href']
+
+                    #Fix relative links before adding to frontier
                     if (re.match("^https://www.cpp.edu", temp) == None):
                         temp = "https://www.cpp.edu" + temp
 
