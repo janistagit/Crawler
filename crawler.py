@@ -17,6 +17,9 @@ def crawlerThread(frontier):
     while len(frontier) != 0:
         url = frontier.pop()
 
+        if (re.match("^https://www.cpp.edu", url) == None):
+             url = "https://www.cpp.edu" + url
+
         try:
             html = urlopen(url)
         except HTTPError as e:
