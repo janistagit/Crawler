@@ -3,6 +3,7 @@ from urllib.error import HTTPError
 from urllib.error import URLError
 from bs4 import BeautifulSoup
 from pymongo import MongoClient
+import re
 
 frontier = []
 frontier.append("https://www.cpp.edu/sci/computer-science/")
@@ -15,6 +16,7 @@ pages = db.pages
 def crawlerThread(frontier):
     while len(frontier) != 0:
         url = frontier.pop()
+
         try:
             html = urlopen(url)
         except HTTPError as e:
@@ -27,3 +29,7 @@ def crawlerThread(frontier):
                 "html":html
             }
             pages.insert_one(document)
+
+            bs = BeautifulSoup(html.read(), 'html.parser')
+            if bs.find("h1", string="Permanent Faculty"):
+                frontier.clear()
