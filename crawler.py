@@ -6,6 +6,11 @@ from pymongo import MongoClient
 
 frontier = []
 frontier.append("https://www.cpp.edu/sci/computer-science/")
+target = "https://www.cpp.edu/sci/computer-science/faculty-and-staff/permanent-faculty.shtml"
+
+client = MongoClient(host="localhost", port=27017)
+db = client.crawler
+pages = db.pages
 
 def crawlerThread(frontier):
     while len(frontier) != 0:
@@ -17,4 +22,8 @@ def crawlerThread(frontier):
         except URLError as e:
             print("Server could not be found.")
         else:
-            pass
+            document = {
+                "url":url,
+                "html":html
+            }
+            pages.insert_one(document)
