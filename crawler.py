@@ -27,7 +27,7 @@ def crawlerThread(frontier):
         except URLError as e:
             print("Server could not be found.")
         else:
-            data = str(html.read())
+            data = html.read().decode(encoding="iso-8859-1")
             document = {
                 "url":url,
                 "html":data
